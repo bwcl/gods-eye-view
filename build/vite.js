@@ -49,6 +49,7 @@ export const BROWSER_HEADERS = Object.freeze({
 
 /** Build browser assets with explicit inputs; never load environment or providers. */
 export function createBrowserViteConfig({
+  base = process.env.BASE_URL || '/',
   plugins = [],
   publicDir,
   googleApiKey,
@@ -60,6 +61,7 @@ export function createBrowserViteConfig({
   command,
 } = {}) {
   return {
+    base,
     plugins: [
       // First, so no provider route answers a Host the server does not allow.
       hostCheckPlugin(),

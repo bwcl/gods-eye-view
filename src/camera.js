@@ -92,8 +92,11 @@ function readGrantedPosition(geo) {
   });
 }
 
+/** Opening height. The arrival stays 30 km up, over the city rather than the street. */
+const START_ALTITUDE_M = 30000;
+
 /**
- * Cinematic arrival over a place: overhead, then down to street altitude.
+ * Arrival over a place: overhead, then a short settle that keeps the city in frame.
  * @param {object} viewer
  * @param {{lat: number, lon: number, label?: string}} [place]
  * @returns {Function} Cancels the pending or active flight.
@@ -102,7 +105,7 @@ export function flyToStartup(viewer, place = AUSTIN_START) {
   const lat = place.lat;
   const lon = place.lon;
   viewer.camera.setView({
-    destination: Cesium.Cartesian3.fromDegrees(lon, lat, 25000),
+    destination: Cesium.Cartesian3.fromDegrees(lon, lat, 80000),
     orientation: {
       heading: Cesium.Math.toRadians(0),
       pitch: Cesium.Math.toRadians(-90),
@@ -112,10 +115,10 @@ export function flyToStartup(viewer, place = AUSTIN_START) {
   const timer = setTimeout(() => {
     if (viewer.isDestroyed()) return;
     viewer.camera.flyTo({
-      destination: Cesium.Cartesian3.fromDegrees(lon, lat, 600),
+      destination: Cesium.Cartesian3.fromDegrees(lon, lat, START_ALTITUDE_M),
       orientation: {
         heading: Cesium.Math.toRadians(15),
-        pitch: Cesium.Math.toRadians(-30),
+        pitch: Cesium.Math.toRadians(-55),
         roll: 0.0,
       },
       duration: 4.0,

@@ -8,6 +8,25 @@ import {
   startDefaultFlight,
 } from '../camera.js';
 
+test('startup settles over the place at metro altitude', (t) => {
+  t.mock.timers.enable({ apis: ['setTimeout'] });
+  const flights = [];
+  flyToAustin({
+    isDestroyed: () => false,
+    camera: {
+      setView() {},
+      flyTo(view) {
+        flights.push(view);
+      },
+      cancelFlight() {},
+    },
+  });
+  t.mock.timers.tick(500);
+  assert.equal(flights.length, 1);
+  const height = Cesium.Cartographic.fromCartesian(flights[0].destination).height;
+  assert.ok(Math.abs(height - 30000) < 1, `arrival height ${height} is not 30 km`);
+});
+
 test('teardown before the initial camera delay prevents a late flight', (t) => {
   t.mock.timers.enable({ apis: ['setTimeout'] });
   let flights = 0;
